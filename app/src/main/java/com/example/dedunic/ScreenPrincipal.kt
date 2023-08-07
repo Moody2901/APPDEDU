@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -153,40 +154,63 @@ fun LiquidacionScreen() {
     var fechaFinalizacion by remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            text = "Liquidación",
+            style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
+
         OutlinedTextField(
             value = salarioMensual,
             onValueChange = { salarioMensual = it },
             label = { Text("Salario Mensual") },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
         )
         OutlinedTextField(
             value = vacaciones,
             onValueChange = { vacaciones = it },
             label = { Text("Vacaciones") },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
         )
         OutlinedTextField(
             value = fechaIngreso,
             onValueChange = { fechaIngreso = it },
             label = { Text("Fecha de Ingreso") },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
         )
         OutlinedTextField(
             value = fechaFinalizacion,
             onValueChange = { fechaFinalizacion = it },
             label = { Text("Fecha de Finalización") },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
         )
 
         Button(
             onClick = {
                 // Perform liquidacion calculation using the provided inputs
             },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+                .height(48.dp),
+            colors = ButtonDefaults.run { val buttonColors =
+                buttonColors(Color.Blue)
+                buttonColors
+            },
+            shape = RoundedCornerShape(8.dp)
         ) {
             Text("Calcular", color = Color.White)
         }
@@ -202,40 +226,63 @@ fun QuincenaScreen() {
     var viatico by remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(
+            text = "Quincenas",
+            style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
+
         OutlinedTextField(
             value = salarioMensual,
             onValueChange = { salarioMensual = it },
             label = { Text("Salario Mensual") },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
         )
         OutlinedTextField(
             value = horaExtra,
             onValueChange = { horaExtra = it },
             label = { Text("Hora Extra") },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
         )
         OutlinedTextField(
             value = vacaciones,
             onValueChange = { vacaciones = it },
             label = { Text("Vacaciones") },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
         )
         OutlinedTextField(
             value = viatico,
             onValueChange = { viatico = it },
             label = { Text("Viatico") },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
         )
 
         Button(
             onClick = {
                 // Perform quincena calculation using the provided inputs
             },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+                .height(48.dp),
+            colors = ButtonDefaults.run { val buttonColors =
+                buttonColors(Color.Blue)
+                buttonColors
+            },
+            shape = RoundedCornerShape(8.dp)
         ) {
             Text("Calcular", color = Color.White)
         }
