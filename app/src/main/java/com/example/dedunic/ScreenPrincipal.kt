@@ -3,12 +3,21 @@ package com.example.dedunic
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -77,32 +86,60 @@ fun LoginScreen(onLoginSuccess: (Boolean) -> Unit) {
     var password by remember { mutableStateOf("") }
 
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp), // Ajustamos los márgenes superior, izquierdo y derecho
+        verticalArrangement = Arrangement.Top, // Alineamos los elementos en la parte superior
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TextField(
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.padding(bottom = 16.dp) // Agregamos un margen inferior al logo
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.login_logo),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .size(200.dp)
+                    .padding(top = 8.dp), // Ajustamos el margen superior del logo
+                alignment = Alignment.Center
+            )
+        }
+        Text(
+            text = "Iniciar Sesión",
+            style = TextStyle(
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            ),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+
+        OutlinedTextField(
             value = username,
             onValueChange = { username = it },
             label = { Text("Username") },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         )
-        TextField(
+        OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
-            modifier = Modifier.padding(16.dp)
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         )
 
         Button(
             onClick = {
                 if (username == "admin" && password == "admin") {
                     onLoginSuccess(true)
+                } else {
+                    onLoginSuccess(false)
                 }
             },
             modifier = Modifier.padding(16.dp)
         ) {
-            Text("Login")
+            Text("Login", color = Color.White)
         }
     }
 }
@@ -120,25 +157,25 @@ fun LiquidacionScreen() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TextField(
+        OutlinedTextField(
             value = salarioMensual,
             onValueChange = { salarioMensual = it },
             label = { Text("Salario Mensual") },
             modifier = Modifier.padding(16.dp)
         )
-        TextField(
+        OutlinedTextField(
             value = vacaciones,
             onValueChange = { vacaciones = it },
             label = { Text("Vacaciones") },
             modifier = Modifier.padding(16.dp)
         )
-        TextField(
+        OutlinedTextField(
             value = fechaIngreso,
             onValueChange = { fechaIngreso = it },
             label = { Text("Fecha de Ingreso") },
             modifier = Modifier.padding(16.dp)
         )
-        TextField(
+        OutlinedTextField(
             value = fechaFinalizacion,
             onValueChange = { fechaFinalizacion = it },
             label = { Text("Fecha de Finalización") },
@@ -151,11 +188,10 @@ fun LiquidacionScreen() {
             },
             modifier = Modifier.padding(16.dp)
         ) {
-            Text("Calcular")
+            Text("Calcular", color = Color.White)
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -170,25 +206,25 @@ fun QuincenaScreen() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TextField(
+        OutlinedTextField(
             value = salarioMensual,
             onValueChange = { salarioMensual = it },
             label = { Text("Salario Mensual") },
             modifier = Modifier.padding(16.dp)
         )
-        TextField(
+        OutlinedTextField(
             value = horaExtra,
             onValueChange = { horaExtra = it },
             label = { Text("Hora Extra") },
             modifier = Modifier.padding(16.dp)
         )
-        TextField(
+        OutlinedTextField(
             value = vacaciones,
             onValueChange = { vacaciones = it },
             label = { Text("Vacaciones") },
             modifier = Modifier.padding(16.dp)
         )
-        TextField(
+        OutlinedTextField(
             value = viatico,
             onValueChange = { viatico = it },
             label = { Text("Viatico") },
@@ -201,7 +237,17 @@ fun QuincenaScreen() {
             },
             modifier = Modifier.padding(16.dp)
         ) {
-            Text("Calcular")
+            Text("Calcular", color = Color.White)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    DeduNicTheme {
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+            LoginScreen(onLoginSuccess = {})
         }
     }
 }
