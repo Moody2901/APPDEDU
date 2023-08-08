@@ -14,7 +14,6 @@ import com.example.dedunic.ui.theme.DeduNicTheme
 class LiquidacionActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             DeduNicTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {

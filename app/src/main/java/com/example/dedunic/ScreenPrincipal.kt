@@ -22,8 +22,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.dedunic.ui.theme.DeduNicTheme
+import androidx.compose.material3.Text as Material3Text
 
 class ScreenPrincipal : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,31 +56,58 @@ fun HomeScreen(navController: NavHostController) {
     if (!isLoggedIn) {
         LoginScreen(onLoginSuccess = { isLoggedIn = it })
     } else {
-        ScreenWithButtons(navController)
+        BottomNavigationBar(navController)
     }
 }
 
 @Composable
-fun ScreenWithButtons(navController: NavHostController) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+fun BottomNavigationBar(navController: NavHostController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    Surface(
+        color = Color.Blue, // Color personalizado
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Button(
-            onClick = { navController.navigate("liquidacion") },
+        BottomAppBar(
+            contentColor = Color.White,
             modifier = Modifier.padding(16.dp)
         ) {
-            Text("Calculate Liquidacion")
-        }
-        Button(
-            onClick = { navController.navigate("quincenas") },
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text("Calculate Quincenas")
+            IconButton(
+                onClick = {
+                    navController.navigate("liquidacion") {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                },
+                modifier = Modifier.weight(1f)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.liquidacion),
+                    contentDescription = "Liquidacion",
+                    tint = if (currentRoute == "liquidacion") Color.White else Color.Blue // Cambiar el color al hacer clic
+                )
+            }
+
+            IconButton(
+                onClick = {
+                    navController.navigate("quincenas") {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                },
+                modifier = Modifier.weight(1f)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.quincena),
+                    contentDescription = "Quincenas",
+                    tint = if (currentRoute == "quincenas") Color.White else Color.Blue // Cambiar el color al hacer clic
+                )
+            }
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -106,7 +135,7 @@ fun LoginScreen(onLoginSuccess: (Boolean) -> Unit) {
                 alignment = Alignment.Center
             )
         }
-        Text(
+        Material3Text(
             text = "Iniciar Sesión",
             style = TextStyle(
                 fontSize = 24.sp,
@@ -119,13 +148,13 @@ fun LoginScreen(onLoginSuccess: (Boolean) -> Unit) {
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text("Username") },
+            label = { Material3Text("Username") },
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         )
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = { Material3Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         )
@@ -140,7 +169,7 @@ fun LoginScreen(onLoginSuccess: (Boolean) -> Unit) {
             },
             modifier = Modifier.padding(16.dp)
         ) {
-            Text("Login", color = Color.White)
+            Material3Text("Login", color = Color.White)
         }
     }
 }
@@ -159,7 +188,7 @@ fun LiquidacionScreen() {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
+        Material3Text(
             text = "Liquidación",
             style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),
             modifier = Modifier.padding(vertical = 16.dp)
@@ -168,7 +197,7 @@ fun LiquidacionScreen() {
         OutlinedTextField(
             value = salarioMensual,
             onValueChange = { salarioMensual = it },
-            label = { Text("Salario Mensual") },
+            label = { Material3Text("Salario Mensual") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
@@ -176,7 +205,7 @@ fun LiquidacionScreen() {
         OutlinedTextField(
             value = vacaciones,
             onValueChange = { vacaciones = it },
-            label = { Text("Vacaciones") },
+            label = { Material3Text("Vacaciones") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
@@ -184,7 +213,7 @@ fun LiquidacionScreen() {
         OutlinedTextField(
             value = fechaIngreso,
             onValueChange = { fechaIngreso = it },
-            label = { Text("Fecha de Ingreso") },
+            label = { Material3Text("Fecha de Ingreso") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
@@ -192,7 +221,7 @@ fun LiquidacionScreen() {
         OutlinedTextField(
             value = fechaFinalizacion,
             onValueChange = { fechaFinalizacion = it },
-            label = { Text("Fecha de Finalización") },
+            label = { Material3Text("Fecha de Finalización") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
@@ -212,7 +241,7 @@ fun LiquidacionScreen() {
             },
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text("Calcular", color = Color.White)
+            Material3Text("Calcular", color = Color.White)
         }
     }
 }
@@ -231,7 +260,7 @@ fun QuincenaScreen() {
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
+        Material3Text(
             text = "Quincenas",
             style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),
             modifier = Modifier.padding(vertical = 16.dp)
@@ -240,7 +269,7 @@ fun QuincenaScreen() {
         OutlinedTextField(
             value = salarioMensual,
             onValueChange = { salarioMensual = it },
-            label = { Text("Salario Mensual") },
+            label = { Material3Text("Salario Mensual") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
@@ -248,7 +277,7 @@ fun QuincenaScreen() {
         OutlinedTextField(
             value = horaExtra,
             onValueChange = { horaExtra = it },
-            label = { Text("Hora Extra") },
+            label = { Material3Text("Hora Extra") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
@@ -256,7 +285,7 @@ fun QuincenaScreen() {
         OutlinedTextField(
             value = vacaciones,
             onValueChange = { vacaciones = it },
-            label = { Text("Vacaciones") },
+            label = { Material3Text("Vacaciones") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
@@ -264,7 +293,7 @@ fun QuincenaScreen() {
         OutlinedTextField(
             value = viatico,
             onValueChange = { viatico = it },
-            label = { Text("Viatico") },
+            label = { Material3Text("Viatico") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
@@ -284,7 +313,7 @@ fun QuincenaScreen() {
             },
             shape = RoundedCornerShape(8.dp)
         ) {
-            Text("Calcular", color = Color.White)
+            Material3Text("Calcular", color = Color.White)
         }
     }
 }
