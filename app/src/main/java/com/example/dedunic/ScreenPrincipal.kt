@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,7 +24,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.dedunic.ui.theme.DeduNicTheme
 import androidx.compose.material3.Text as Material3Text
@@ -45,8 +46,8 @@ fun MainScreen() {
     val navController = rememberNavController()
     NavHost(navController, startDestination = "home") {
         composable("home") { HomeScreen(navController) }
-        composable("liquidacion") { LiquidacionScreen() }
-        composable("quincenas") { QuincenaScreen() }
+        composable("liquidacion") { LiquidacionScreen(navController) }
+        composable("quincenas") { QuincenaScreen(navController) }
     }
 }
 
@@ -56,58 +57,46 @@ fun HomeScreen(navController: NavHostController) {
     if (!isLoggedIn) {
         LoginScreen(onLoginSuccess = { isLoggedIn = it })
     } else {
-        BottomNavigationBar(navController)
-    }
-}
-
-@Composable
-fun BottomNavigationBar(navController: NavHostController) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-
-    Surface(
-        color = Color.Blue, // Color personalizado
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        BottomAppBar(
-            contentColor = Color.White,
-            modifier = Modifier.padding(16.dp)
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            IconButton(
-                onClick = {
-                    navController.navigate("liquidacion") {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
-                },
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.liquidacion),
-                    contentDescription = "Liquidacion",
-                    tint = if (currentRoute == "liquidacion") Color.White else Color.Blue // Cambiar el color al hacer clic
-                )
-            }
+            // Logo de la aplicación
+            Image(
+                painter = painterResource(id = R.drawable.login_logo), // Cambiar el recurso a tu logo
+                contentDescription = "Logo de la aplicación",
+                modifier = Modifier.size(200.dp)
+            )
 
-            IconButton(
-                onClick = {
-                    navController.navigate("quincenas") {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
-                },
-                modifier = Modifier.weight(1f)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Descripción de la aplicación
+            Material3Text(
+                text = "Bienvenido a la aplicación DeduNic. Esta aplicación te permite realizar cálculos de liquidación y quincenas de forma sencilla.",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Botones para acceder a las pantallas de Liquidación y Quincenas
+            Button(
+                onClick = { navController.navigate("liquidacion") },
+                modifier = Modifier.padding(16.dp)
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.quincena),
-                    contentDescription = "Quincenas",
-                    tint = if (currentRoute == "quincenas") Color.White else Color.Blue // Cambiar el color al hacer clic
-                )
+                Material3Text("Calcular Liquidación")
+            }
+            Button(
+                onClick = { navController.navigate("quincenas") },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Material3Text("Calcular Quincenas")
             }
         }
     }
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -176,7 +165,7 @@ fun LoginScreen(onLoginSuccess: (Boolean) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LiquidacionScreen() {
+fun LiquidacionScreen(navController: NavHostController) {
     var salarioMensual by remember { mutableStateOf("") }
     var vacaciones by remember { mutableStateOf("") }
     var fechaIngreso by remember { mutableStateOf("") }
@@ -243,12 +232,23 @@ fun LiquidacionScreen() {
         ) {
             Material3Text("Calcular", color = Color.White)
         }
+        FloatingActionButton(
+            onClick = {
+                navController.popBackStack() // Retroceder en la navegación
+            },
+            modifier = Modifier
+                .align(Alignment.End) // Alinear en la esquina inferior derecha
+                .padding(16.dp)
+        ) {
+            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+        }
     }
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun QuincenaScreen() {
+fun QuincenaScreen(navController: NavHostController) {
     var salarioMensual by remember { mutableStateOf("") }
     var horaExtra by remember { mutableStateOf("") }
     var vacaciones by remember { mutableStateOf("") }
@@ -315,6 +315,23 @@ fun QuincenaScreen() {
         ) {
             Material3Text("Calcular", color = Color.White)
         }
+        FloatingActionButton(
+            {
+                navController.popBackStack() // Retroceder en la navegación
+            }, Modifier
+                .align(Alignment.End) // Alinear en la esquina inferior derecha
+                .padding(16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack, // Cambiar al icono deseado
+                contentDescription = "Back",
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .padding(16.dp),
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+
+        }
     }
 }
 
@@ -324,6 +341,42 @@ fun LoginScreenPreview() {
     DeduNicTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
             LoginScreen(onLoginSuccess = {})
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HomeScreenPreview() {
+    DeduNicTheme {
+        val navController = rememberNavController()
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            HomeScreen(navController)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LiquidacionScreenPreview() {
+    DeduNicTheme {
+        val navController = rememberNavController()
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+            LiquidacionScreen(navController)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun QuincenaScreenPreview() {
+    DeduNicTheme {
+        val navController = rememberNavController()
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+            QuincenaScreen(navController)
         }
     }
 }
