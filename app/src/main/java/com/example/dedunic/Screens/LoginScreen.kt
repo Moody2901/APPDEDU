@@ -12,10 +12,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.dedunic.R
+import com.example.dedunic.ui.theme.DeduNicTheme
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,14 +62,14 @@ fun LoginScreen(navController: NavHostController) {
             value = username,
             onValueChange = { username = it },
             label = { Text("Username") },
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
         )
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
         )
 
         if (showError) {
@@ -74,7 +77,7 @@ fun LoginScreen(navController: NavHostController) {
                 text = "Usuario o contraseña incorrectos",
                 style = TextStyle(
                     color = Color.Red,
-                    fontSize = 14.sp
+                    fontSize = 16.sp
                 ),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(top = 8.dp)
@@ -89,9 +92,20 @@ fun LoginScreen(navController: NavHostController) {
                     showError = true // Mostrar el mensaje de error si las credenciales no son correctas
                 }
             },
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+            colors = ButtonDefaults.buttonColors(Color(0xFF5F82E8))
         ) {
             Text("Login", color = Color.White)
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    DeduNicTheme {
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+            LoginScreen(navController = rememberNavController())
         }
     }
 }
