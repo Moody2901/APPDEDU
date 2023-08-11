@@ -63,7 +63,7 @@ fun HomeScreen(navController: NavHostController) {
         Button(
             onClick = { navController.navigate("liquidacion") },
             modifier = buttonModifier,
-            colors = ButtonDefaults.buttonColors(Color(0xFF5F82E8))
+            colors = ButtonDefaults.buttonColors(Color(0xFF9E6DF7))
         ) {
             Text("Calcular Liquidación", color = Color.White)
         }
@@ -71,7 +71,7 @@ fun HomeScreen(navController: NavHostController) {
         Button(
             onClick = { navController.navigate("quincenas") },
             modifier = buttonModifier,
-            colors = ButtonDefaults.buttonColors(Color(0xFFE85F5F))
+            colors = ButtonDefaults.buttonColors(Color(0xFF9E6DF7))
         ) {
             Text("Calcular Quincenas", color = Color.White)
         }

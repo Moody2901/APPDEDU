@@ -105,7 +105,7 @@ fun QuincenaScreen(navController: NavHostController) {
                 .fillMaxWidth()
                 .padding(top = 16.dp)
                 .height(48.dp),
-            colors = ButtonDefaults.buttonColors(Color(0xFFE85F5F)),
+            colors = ButtonDefaults.buttonColors(Color(0xFF9E6DF7)),
             shape = RoundedCornerShape(8.dp)
         ) {
             Text("Calcular", color = Color.White)
