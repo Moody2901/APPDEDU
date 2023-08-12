@@ -3,7 +3,10 @@ package com.example.dedunic.Screens
 import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
@@ -13,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,6 +31,16 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.concurrent.TimeUnit
+import java.text.DecimalFormat
+
+fun formatDoubleWithTwoDecimals(input: Double): String {
+    val decimalFormat = DecimalFormat("#.00")
+    return decimalFormat.format(input)
+}
+
+
+
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +55,8 @@ fun LiquidacionScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -53,6 +69,9 @@ fun LiquidacionScreen(navController: NavHostController) {
             value = salarioMensual,
             onValueChange = { salarioMensual = it },
             label = { Text("Salario Mensual") },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
@@ -61,6 +80,9 @@ fun LiquidacionScreen(navController: NavHostController) {
             value = vacaciones,
             onValueChange = { vacaciones = it },
             label = { Text("Vacaciones") },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
@@ -88,24 +110,26 @@ fun LiquidacionScreen(navController: NavHostController) {
                 val diasDiferencia = calcularDiferenciaEnDias(fechaIngreso, fechaFinalizacion)
                 val costo = calcularCosto(diasDiferencia)
                 val antiguedad = calcularAntiguedad(costo)
-                val salarioDiario = salarioMensual.toDoubleOrNull() ?: (0.0 / 30)
-                val proporcional = calcularProporcional(salarioDiario, costo)
-                val aguinaldoPro = calcularAguinaldoPro(fechaFinalizacion)
-                val aguinaldoProporcional = calcularAguinaldoProporcional(salarioDiario, aguinaldoPro)
+                val AntiguedadLab:Double = calcularAntiguedadPagada(salarioMensual.toDouble(), costo.toDouble())
+                val salarioDiario = salarioMensual.toDoubleOrNull() ?: (0.0 / 12)
                 val diasEnQuincena = calcularDiasEnQuincena(
                     SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(fechaFinalizacion) ?: Date()
                 )
+                val dias: Double = diasEnQuincena.toDouble()
                 val primeraQuincena = esPrimeraQuincena(
                     SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(fechaFinalizacion) ?: Date()
                 )
+                val proporcional = calcularProporcional(salarioDiario, dias)
+                val aguinaldoPro = calcularAguinaldoPro(fechaFinalizacion)
+                val aguinaldoProporcional = calcularAguinaldoProporcional(salarioDiario, aguinaldoPro)
 
-                val totalVacaciones =
-                    (salarioMensual.toDoubleOrNull() ?: (0.0 / 30)) * (vacaciones.toDoubleOrNull()
-                        ?: 0.0)
+
+                val totalVacaciones = ((salarioMensual.toDouble()/30)*vacaciones.toDouble())
+
                 val deduccionesInssVacaciones = totalVacaciones * 0.07
                 val deduccionesIrVacaciones = totalVacaciones * 0.14
 
-                val devengadoTotal = antiguedad + proporcional + aguinaldoProporcional
+                val devengadoTotal = AntiguedadLab + proporcional + aguinaldoProporcional
                 val deduccionesInssProporcional = proporcional * 0.07
                 val deduccionesIrProporcional = proporcional * 0.14
 
@@ -113,20 +137,33 @@ fun LiquidacionScreen(navController: NavHostController) {
                     deduccionesInssVacaciones + deduccionesIrVacaciones + deduccionesInssProporcional + deduccionesIrProporcional
                 val netoRecibir = devengadoTotal - totalDeducciones
 
+                val NetoRecibir = formatDoubleWithTwoDecimals(netoRecibir)
+                val Antiguedad= formatDoubleWithTwoDecimals(antiguedad)
+                val AntiguedadLab1 = formatDoubleWithTwoDecimals(AntiguedadLab)
+                val Proporcional = formatDoubleWithTwoDecimals(proporcional)
+                val AguinaldoProporcional = formatDoubleWithTwoDecimals(aguinaldoProporcional)
+                val TotalVacaciones = formatDoubleWithTwoDecimals(totalVacaciones)
+                val DeduccionesInssVacaciones = formatDoubleWithTwoDecimals(deduccionesInssVacaciones)
+                val DeduccionesIrVacaciones = formatDoubleWithTwoDecimals(deduccionesIrVacaciones)
+                val DevengadoTotal = formatDoubleWithTwoDecimals(devengadoTotal)
+                val DeduccionesInssProporcional = formatDoubleWithTwoDecimals(deduccionesInssProporcional)
+                val DeduccionesIrProporcional = formatDoubleWithTwoDecimals(deduccionesIrProporcional)
+                val TotalDeducciones = formatDoubleWithTwoDecimals(totalDeducciones)
+
+
                 resultadoLiquidacion = """
-                    Antigüedad Laboral: $antiguedad
-                    Salario Proporcional: $proporcional
-                    Aguinaldo Proporcional: $aguinaldoProporcional
-                    Días en Quincena: $diasEnQuincena
-                    Primera Quincena: $primeraQuincena
-                    Total Vacaciones: $totalVacaciones
-                    Deducciones INSS Vacaciones: $deduccionesInssVacaciones
-                    Deducciones IR Vacaciones: $deduccionesIrVacaciones
-                    Devengado Total: $devengadoTotal
-                    Deducciones INSS Proporcional: $deduccionesInssProporcional
-                    Deducciones IR Proporcional: $deduccionesIrProporcional
-                    Total Deducciones: $totalDeducciones
-                    Neto a Recibir: $netoRecibir
+                    Dias Indemnizados: $Antiguedad
+                    Indemnizacion: $AntiguedadLab1
+                    Salario Proporcional: $Proporcional
+                    Aguinaldo Proporcional: $AguinaldoProporcional
+                    Vacaciones: $TotalVacaciones
+                    Devengado Total: $DevengadoTotal
+                    Deducciones INSS Vacaciones: $DeduccionesInssVacaciones
+                    Deducciones INSS Proporcional: $DeduccionesInssProporcional
+                    Deducciones IR Vacaciones: $DeduccionesIrVacaciones
+                    Deducciones IR Proporcional: $DeduccionesIrProporcional
+                    Total Deducciones: $TotalDeducciones
+                    Neto a Recibir: $NetoRecibir
                 """.trimIndent()
             },
             modifier = Modifier
@@ -138,6 +175,17 @@ fun LiquidacionScreen(navController: NavHostController) {
         ) {
             Text("Calcular", color = Color.White)
         }
+
+        Text(
+            text = "Resultado del cálculo:",
+            style = TextStyle(
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            ),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -221,14 +269,29 @@ fun calcularAntiguedad(costo: Double): Double {
         else -> ((costo - limiteCosto) / 20 * costoDespuesTresAnos) + (costoPrimerosTresAnos * 3)
     }
 }
+fun calcularAntiguedadPagada(salarioMensual:Double,costo: Double):Double {
+    val mensual3 = salarioMensual
+    val mensual2 = (salarioMensual / 30) * 20
 
-fun calcularProporcional(salarioDiario: Double, costo: Double): Double {
-    return salarioDiario * costo
+    var antiguedad = 0.0
+
+    if (costo <= 90) {
+        antiguedad = (costo / 30) * mensual3
+    } else if (costo > 90 && costo < 150) {
+        val sobrante = (costo - 90) / 20
+        antiguedad = ((sobrante * mensual2) + (mensual3 * 3))
+    }
+    return  antiguedad
 }
 
-fun calcularAguinaldoPro(fechaFinStr: String): Double {
+
+fun calcularProporcional(salarioDiario: Double, diasEnQuincena: Double): Double {
+    return ((salarioDiario /30)*diasEnQuincena)
+}
+
+fun calcularAguinaldoPro(fechaFinalizacion: String): Double {
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-    val fechaFin = LocalDate.parse(fechaFinStr, formatter)
+    val fechaFin = LocalDate.parse(fechaFinalizacion, formatter)
     val fechaInicio = LocalDate.of(fechaFin.year - 1, 11, 30)
     val mesesTotales = ChronoUnit.MONTHS.between(fechaInicio, fechaFin)
     val diasEnMesFin = fechaFin.dayOfMonth
@@ -236,8 +299,9 @@ fun calcularAguinaldoPro(fechaFinStr: String): Double {
     return mesesTotales + fraccionDias
 }
 
-fun calcularAguinaldoProporcional(salarioDiario: Double, aguinaldoPro: Double): Double {
-    return salarioDiario * aguinaldoPro
+fun calcularAguinaldoProporcional(salarioMensual: Double, aguinaldoPro: Double): Double {
+    return  ((salarioMensual/12)*aguinaldoPro)
+
 }
 
 fun calcularDiasEnQuincena(fecha: Date): Int {
